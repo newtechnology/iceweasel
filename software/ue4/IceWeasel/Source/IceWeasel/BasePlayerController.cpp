@@ -2,13 +2,23 @@
 
 #include "IceWeasel.h"
 #include "BasePlayerController.h"
+#include "BaseSaveGame.h"
 
 
 ABasePlayerController::ABasePlayerController()
 {
-	//Initialize variables to default value
-	AimPitch = 0.0f;
+	//Initialize defaults
 }
+
+void ABasePlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("BasePlayerController BeginPlay!."));
+
+	SelectedCharacterIndex = 0;
+}
+
 
 void ABasePlayerController::SetupInputComponent()
 {
@@ -23,25 +33,10 @@ void ABasePlayerController::SetupInputComponent()
 	InputComponent->BindAction("Jump", IE_Released, this, &ABasePlayerController::JumpButtonReleased);
 }
 
-#pragma region Server RPCs
-/*
-void ABasePlayerController::ServerCalculatePitch_Implementation()
-{
-	CalculatePitch();
-}
-
-
-bool ABasePlayerController::ServerCalculatePitch_Validate()
-{
-	return true;
-}
-*/
-#pragma endregion
-
 
 void ABasePlayerController::MoveForward(float AxisValue)
 {
-	if (AxisValue != 0.0f)
+	if (AxisValue != 0.0f && GetPawn())
 	{
 		const FRotator YawRotation(0, ControlRotation.Yaw, 0);
 
@@ -54,7 +49,7 @@ void ABasePlayerController::MoveForward(float AxisValue)
 
 void ABasePlayerController::MoveRight(float AxisValue)
 {
-	if (AxisValue != 0.0f)
+	if (AxisValue != 0.0f && GetPawn())
 	{
 		const FRotator YawRotation(0, ControlRotation.Yaw, 0);
 
@@ -69,9 +64,6 @@ void ABasePlayerController::LookUp(float AxisValue)
 {
 	if (AxisValue != 0.0f)
 	{
-
-		CalculatePitch();
-
 		AddPitchInput(AxisValue);
 	}
 }
@@ -104,40 +96,3 @@ void ABasePlayerController::JumpButtonReleased()
 		character->StopJumping();
 	}
 }
-
-
-//Calculate AimPitch to be used inside animation blueprint for aimoffsets
-void ABasePlayerController::CalculatePitch()
-{
-	APawn* p = GetPawn();
-
-	if (p == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Pawn is null."));
-		return;
-	}
-	
-
-	FRotator ActorRotation = p->GetActorRotation();
-
-	FRotator Delta = ControlRotation - ActorRotation;
-
-	FRotator Pitch(AimPitch, 0.0f, 0.0f);
-
-	FRotator Final = FMath::RInterpTo(Pitch, Delta, GetWorld()->DeltaTimeSeconds, 0.0f);
-
-
-	AimPitch = FMath::ClampAngle(Final.Pitch, -90.0f, 90.0f);
-
-
-}
-
-/*
-void ABasePlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-
-	//DOREPLIFETIME_CONDITION(ABasePlayerController, AimPitch, COND_SkipOwner);
-}
-*/

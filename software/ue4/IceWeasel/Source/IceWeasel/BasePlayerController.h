@@ -22,6 +22,9 @@ public:
 	ABasePlayerController();
 	
 protected:
+
+	virtual void BeginPlay() override;
+
 	virtual void SetupInputComponent() override;
 
 	void MoveForward(float AxisValue);
@@ -29,17 +32,17 @@ protected:
 	void Turn(float AxisValue);
 	void LookUp(float AxisValue);
 
-	void CalculatePitch();
-
-	//UFUNCTION(Server, UnReliable, WithValidation)
-	//void ServerCalculatePitch();
-
-protected:
-	UPROPERTY(BlueprintReadWrite)
-	float AimPitch;
-
-
 private:
 	void JumpButtonDown();
 	void JumpButtonReleased();
+
+
+public:
+	/** A Choosen Character to spawn from this Character Array and posses when this player is connected to a server */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, DisplayName="Player Character", Category = "Player Character")
+	TArray<TSubclassOf<ACharacter>> SelectedCharacter;
+
+	/** Which Character to Spawn */
+	UPROPERTY(BlueprintReadWrite)
+	int SelectedCharacterIndex;
 };

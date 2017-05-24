@@ -1,23 +1,13 @@
-Git Stuff
----------
-We use  [git  LFS](https://git-lfs.github.com/) for managing large files. Please
-download and  install  it,  otherwise  you won't be able to access certain files
-(like resources).
-
-You may have to run this command to avoid having to enter your password at every file:
-```
-git config --global credential.helper cache
-```
 Project Guide (For UE4) :
 --------
 
-This project requires you to add Starter Content manually after successfully cloning the project. 
+This project requires you to add Starter Content after successfully cloning the project. 
 ![alt tag](https://cdn.discordapp.com/attachments/190780544051707904/290512683755634688/Capture.PNG)
 ![alt tag](https://cdn.discordapp.com/attachments/190780544051707904/290512783865544704/Capture2.PNG)
 
-After adding Starter Content, you can open any map successfully.
-The project is currently compatible with Unreal 4.15.0 and 4.15.1 so it's recommended to open it using any of those versions.
- 
+After adding Starter Content, you can open any map successfully which references assets from it.
+
+(This project requires Unreal Engine of version 4.15.)
 
 
 Building (Old Guide - for the Urho3D Engine)
